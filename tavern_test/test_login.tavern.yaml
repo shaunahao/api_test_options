@@ -1,0 +1,99 @@
+# tavern: Tavern是用于HTTP，MQTT或其他协议的基于pytest的高级API测试框架
+# pip install pyyaml
+# pip install pytest==4.5.0
+# pip install tavern
+# pip install pytest-html
+
+test_name: login_get
+
+# marks:
+#   - skip
+
+stages:
+  - name: test_login_001
+    request:
+      url: "{url}"
+      method: GET
+    response:
+      status_code: 200
+---
+test_name: login_post
+
+# marks:
+#   - usefixtures:
+#     - logging
+
+stages:
+  - name: test_login_002
+    request:
+      url: "{url}"
+      method: POST
+      data:
+        username: admin
+        password: abc123
+        age: 18
+        sex: F
+    response:
+      status_code: 200
+      json:
+        username: "{tavern.request_vars.data.username}"
+        age: 18
+        password: abc123
+        sex: F
+---
+test_name: login_wrong_sex
+stages:
+  - name: test_login_002
+    request:
+      url: "{url}"
+      method: POST
+      data:
+        username: admin
+        password: abc123
+        age: 18
+        sex: X
+    response:
+      status_code: 400
+      json:
+        message:
+          sex: sex is wrong
+---
+test_name: login_wrong_name
+stages:
+  - name: test_login_003
+    request:
+      url: "{url}"
+      method: POST
+      data:
+        password: abc123
+        age: 18
+        sex: F
+    response:
+      status_code: 400
+      json:
+        message:
+          username: username is wrong
+---
+test_name: login_wrong_age
+
+marks:
+  - parametrize:
+      key: age
+      vals:
+        - abc
+        - None
+stages:
+  - name: test_login_003
+    request:
+      url: "{url}"
+      method: POST
+      data:
+        username: admin
+        password: abc123
+        age: "{age}"
+        sex: F
+    response:
+      status_code: 400
+      json:
+        message:
+          age: age must be int
