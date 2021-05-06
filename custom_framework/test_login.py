@@ -8,6 +8,7 @@ def test_success_login(re, url):
     assert r.status_code == 200
     assert r.json() == {"username":"admin", "password":"abc123", "age":18, "sex":"F"}
 
+@pytest.mark.smoke
 def test_login_wrong_sex(re, url):
     r = re.post(
         url = url,
