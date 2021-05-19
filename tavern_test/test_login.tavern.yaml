@@ -1,8 +1,6 @@
-# tavern: Tavern是用于HTTP，MQTT或其他协议的基于pytest的高级API测试框架
 # pip install pyyaml
 # pip install pytest==4.5.0
 # pip install tavern
-# pip install pytest-html
 
 test_name: login_get
 
@@ -10,7 +8,7 @@ test_name: login_get
 #   - skip
 
 stages:
-  - name: test_login_001
+  - name: Make get request
     request:
       url: "{url}"
       method: GET
@@ -24,7 +22,7 @@ test_name: login_post
 #     - logging
 
 stages:
-  - name: test_login_002
+  - name: Make a successful login request
     request:
       url: "{url}"
       method: POST
@@ -59,6 +57,8 @@ stages:
           sex: sex is wrong
 ---
 test_name: login_wrong_name
+marks:
+  - smoke
 stages:
   - name: test_login_003
     request:
@@ -73,6 +73,22 @@ stages:
       json:
         message:
           username: username is wrong
+  - name: Success login after first faliure
+    request:
+      url: "{url}"
+      method: POST
+      data:
+        username: admin
+        password: abc123
+        age: 18
+        sex: F
+    response:
+      status_code: 200
+      json:
+        username: admin
+        age: 18
+        password: abc123
+        sex: F
 ---
 test_name: login_wrong_age
 

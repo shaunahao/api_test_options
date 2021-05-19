@@ -1,0 +1,6 @@
+pyyaml
+pytest==4.5.0
+tavern
+snapshottest
+flask
+flask-restful
